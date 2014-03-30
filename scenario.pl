@@ -3,36 +3,27 @@ use warnings;
 use strict;
 use feature qw{ say };
 
-use File::Temp qw{ tempdir };
+use File::Temp      qw{ tempdir };
 use Term::ANSIColor qw{ color };
 
-my $repo   = '';
-my $branch = 'b' . time;
-my $ERROR  = '|| echo ERROR';
+my %template = (
+                repo  => tempdir(),
+                ERROR => '|| echo ERROR',
+               );
 
-my @lines = split /\n/, << "__SCENARIO__";
-
-# Comment
-@ date > a
-                        @ date > b
-cat a
-                        cat b
-__SCENARIO__
-
-
-my %dirs = ( A => tempdir( DIR => '/tmp'),
-             B => tempdir( DIR => '/tmp'),
+my %dirs = ( A => tempdir(),
+             B => tempdir(),
            );
 my %color = ( A => 'green',
               B => 'cyan',
             );
 
-system("rm -rf '$_'"), mkdir for values %dirs;
-
 my $count;
-for (@lines) {
+while (<>) {
     next unless /\S/;
-    say(color('red'), "$1", color('reset')), next if /^\s*(#.*)/;
+    print(color('red'), "\n$1", color('reset')), next if /^\s*(#.*)/;
+
+    s/%([[:alnum:]]+)/$template{$1}/;
 
     my $who = s/^\s+// ? 'B': 'A';
     my $hidden = s/^@\s+//;
@@ -42,14 +33,14 @@ for (@lines) {
                   color('reset'), color($color{$who});
     }
 
-    die "Error: $!\n" if system 'cd ' . $dirs{$who} . ';' . $_;
+    die "Error: $?\n" if system 'cd ' . $dirs{$who} . ';' . $_;
 
     sleep 1 unless $hidden;
 }
 
 say color('reset');
 
-system "rm -rf '$_'" for values %dirs;
+system "rm -rf '$_'" for $template{repo}, values %dirs;
 
 =head1 DESCRIPTION
 

@@ -1,0 +1,72 @@
+# Create the repository.
+cd %repo && git init --bare
+
+# Make a working copy.
+git clone %repo .
+@ git config --local user.name user1
+@ git config --local user.email ''
+@ git config --local color.ui never
+date > test
+git add test
+git commit -m 'Initial commit'
+git push origin master
+
+# Make a branch
+git checkout -b branch
+date > test
+git add test
+git commit -m 'Branch created'
+git push origin branch
+
+                                        # Clone the repo, too.
+                                        git clone %repo .
+                                        @ git config --local user.name user2
+                                        @ git config --local user.email ''
+                                        @ git config --local color.ui never
+
+                                        # Change master.
+                                        date > test
+                                        git add test
+                                        git commit -m 'master changed'
+                                        git push origin master
+# Continue on the branch.
+date > test
+git add test
+git commit -m 'Branch updated'
+git push -u origin branch
+
+# Update the master.
+git checkout master
+git pull
+
+# Rebase the branch.
+git checkout branch
+git rebase master %ERROR
+cat test
+
+# Solve the conflicts.
+date > test
+git add test
+git status
+git rebase --continue %ERROR
+cat test
+date > test
+git add test
+git rebase --continue
+                                        # Pull + rebase
+                                        git checkout branch
+                                        git pull --rebase
+                                        git checkout master
+                                        git pull
+                                        git checkout branch
+                                        git rebase master %ERROR
+                                        cat test
+
+                                        # Solve the conflicts
+                                        date > test
+                                        git add test
+                                        git rebase --continue %ERROR
+                                        cat test
+                                        date > test
+                                        git add test
+                                        git rebase --continue
