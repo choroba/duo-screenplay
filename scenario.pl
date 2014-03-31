@@ -6,6 +6,7 @@ use feature qw{ say };
 use File::Temp      qw{ tempdir };
 use Term::ANSIColor qw{ color };
 
+
 my %template = (
                 repo  => tempdir(),
                 ERROR => '|| echo ERROR',
@@ -14,6 +15,13 @@ my %template = (
 my %dirs = ( A => tempdir(),
              B => tempdir(),
            );
+
+sub cleanup {
+    system "rm -rf '$_'" for $template{repo}, values %dirs;
+};
+
+local $SIG{__DIE__} = sub { cleanup() };
+
 my %color = ( A => 'green',
               B => 'cyan',
             );
@@ -39,8 +47,7 @@ while (<>) {
 }
 
 say color('reset');
-
-system "rm -rf '$_'" for $template{repo}, values %dirs;
+cleanup();
 
 =head1 DESCRIPTION
 
