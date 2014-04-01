@@ -31,7 +31,7 @@ while (<>) {
     next unless /\S/;
     print(color('red'), "\n$1", color('reset')), next if /^\s*(#.*)/;
 
-    s/%([[:alnum:]]+)/$template{$1}/;
+    s/%([[:alnum:]]+)/$template{$1}/g;
 
     my $who = s/^\s+// ? 'B': 'A';
     my $hidden = s/^@\s+//;
