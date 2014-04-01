@@ -51,7 +51,10 @@ cleanup();
 
 =head1 DESCRIPTION
 
+Simulate two users working in a shell simultaneously.
+
 =head1 AUTHOR
 
+(c) E. Choroba 2014
 
 =cut
